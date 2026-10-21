@@ -1,0 +1,192 @@
+/**
+ * Idempotent seed: categories, sample products, store settings and the bootstrap super admin.
+ * Run with: npm run seed (requires MONGODB_URI). Safe to re-run.
+ */
+import { connectDb, disconnectDb } from '../config/db.js';
+import { Category, Product, Settings } from '../models/index.js';
+import { ensureBootstrapAdmin } from '../services/bootstrap.js';
+import { logger } from '../lib/logger.js';
+import { env } from '../config/env.js';
+
+const CATEGORIES = [
+  { name: 'Watches', slug: 'watches', description: 'Timepieces for every occasion, from dress watches to sports chronographs.', image: '/placeholders/watches.svg', sortOrder: 1 },
+  { name: 'Sneakers', slug: 'sneakers', description: 'Limited and classic sneakers, authenticated and ready to wear.', image: '/placeholders/sneakers.svg', sortOrder: 2 },
+  { name: 'Accessories', slug: 'accessories', description: 'Leather goods, belts, eyewear and finishing touches.', image: '/placeholders/accessories.svg', sortOrder: 3 },
+  { name: 'Designer Fashion', slug: 'designer-fashion', description: 'Considered ready-to-wear from designer houses.', image: '/placeholders/fashion.svg', sortOrder: 4 },
+];
+
+type SeedProduct = {
+  name: string;
+  category: string;
+  brand: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  salePrice?: number;
+  stock: number;
+  sku: string;
+  image: string;
+  sizes?: string[];
+  colors?: string[];
+  tags: string[];
+  featured?: boolean;
+  soldCount?: number;
+};
+
+const PRODUCTS: SeedProduct[] = [
+  {
+    name: 'Oyster Chronometer 41',
+    category: 'watches',
+    brand: 'Meridian',
+    description: 'A 41mm oyster-case chronometer with a sapphire crystal, screw-down crown and 72-hour power reserve.',
+    shortDescription: '41mm automatic chronometer, sapphire crystal.',
+    price: 1450000,
+    stock: 4,
+    sku: 'WCH-MER-001',
+    image: '/placeholders/watches.svg',
+    colors: ['Steel', 'Champagne'],
+    tags: ['automatic', 'dress', 'sapphire'],
+    featured: true,
+    soldCount: 12,
+  },
+  {
+    name: 'Calatrava Heritage Dress Watch',
+    category: 'watches',
+    brand: 'Aurelian',
+    description: 'A slim 38mm dress watch in 18k rose gold with a hand-guilloché dial and alligator strap.',
+    shortDescription: 'Slim 38mm dress watch, 18k rose gold.',
+    price: 2680000,
+    salePrice: 2390000,
+    stock: 2,
+    sku: 'WCH-AUR-002',
+    image: '/placeholders/watches.svg',
+    colors: ['Rose gold'],
+    tags: ['dress', 'gold', 'heritage'],
+    featured: true,
+    soldCount: 7,
+  },
+  {
+    name: 'Air Heritage Low Leather',
+    category: 'sneakers',
+    brand: 'Kiki Kicks',
+    description: 'Full-grain leather low-top sneakers with a cushioned midsole and hand-stitched detailing. Made in small batches.',
+    shortDescription: 'Full-grain leather low-top, cushioned midsole.',
+    price: 185000,
+    stock: 30,
+    sku: 'SNK-KIK-001',
+    image: '/placeholders/sneakers.svg',
+    sizes: ['39', '40', '41', '42', '43', '44'],
+    colors: ['White', 'Black'],
+    tags: ['leather', 'low-top', 'everyday'],
+    featured: true,
+    soldCount: 48,
+  },
+  {
+    name: 'Court Runner High Suede',
+    category: 'sneakers',
+    brand: 'Kiki Kicks',
+    description: 'High-top suede sneakers with a padded collar and a grippy rubber outsole.',
+    shortDescription: 'High-top suede with padded collar.',
+    price: 210000,
+    salePrice: 175000,
+    stock: 3,
+    sku: 'SNK-KIK-002',
+    image: '/placeholders/sneakers.svg',
+    sizes: ['40', '41', '42', '43', '44'],
+    colors: ['Sand', 'Navy'],
+    tags: ['suede', 'high-top'],
+    featured: false,
+    soldCount: 22,
+  },
+  {
+    name: 'Full-Grain Belt, 35mm',
+    category: 'accessories',
+    brand: 'Maison Lumiere',
+    description: 'A 35mm belt in full-grain Italian calfskin with a brushed palladium buckle.',
+    shortDescription: '35mm full-grain calfskin belt.',
+    price: 98000,
+    stock: 18,
+    sku: 'ACC-MAL-001',
+    image: '/placeholders/accessories.svg',
+    sizes: ['90', '95', '100', '105'],
+    colors: ['Black', 'Tan'],
+    tags: ['leather', 'belt', 'gift'],
+    featured: true,
+    soldCount: 31,
+  },
+  {
+    name: 'Tailored Wool Overcoat',
+    category: 'designer-fashion',
+    brand: 'Atelier Noir',
+    description: 'A single-breasted overcoat in Super 120s wool with a silk lining and horn buttons.',
+    shortDescription: 'Super 120s wool overcoat, silk lining.',
+    price: 640000,
+    stock: 6,
+    sku: 'FSH-ATN-001',
+    image: '/placeholders/fashion.svg',
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Charcoal', 'Camel'],
+    tags: ['coat', 'wool', 'tailoring'],
+    featured: true,
+    soldCount: 5,
+  },
+];
+
+async function seed(): Promise<void> {
+  await connectDb();
+
+  const categoryIds = new Map<string, unknown>();
+  for (const category of CATEGORIES) {
+    const doc = await Category.findOneAndUpdate({ slug: category.slug }, { $set: category }, { upsert: true, new: true });
+    categoryIds.set(category.slug, doc._id);
+  }
+
+  for (const p of PRODUCTS) {
+    const { category, image, soldCount, ...rest } = p;
+    await Product.findOneAndUpdate(
+      { sku: p.sku },
+      {
+        $set: {
+          ...rest,
+          slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+          category: categoryIds.get(category),
+          images: [image],
+          sizes: p.sizes ?? [],
+          colors: p.colors ?? [],
+          specifications: [
+            { label: 'Brand', value: p.brand },
+            { label: 'SKU', value: p.sku },
+          ],
+          isActive: true,
+          trending: (soldCount ?? 0) >= 20,
+          soldCount: soldCount ?? 0,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+  }
+
+  await Settings.updateOne(
+    { key: 'store' },
+    {
+      $setOnInsert: {
+        key: 'store',
+        storeName: env.STORE_NAME,
+        supportEmail: env.STORE_SUPPORT_EMAIL,
+        whatsappNumber: env.STORE_WHATSAPP_NUMBER,
+        lowStockThreshold: 5,
+      },
+    },
+    { upsert: true },
+  );
+
+  await ensureBootstrapAdmin();
+  logger.info({ categories: CATEGORIES.length, products: PRODUCTS.length }, 'Seed complete');
+}
+
+seed()
+  .catch((err) => {
+    logger.error({ err }, 'Seed failed');
+    process.exitCode = 1;
+  })
+  .finally(() => disconnectDb());

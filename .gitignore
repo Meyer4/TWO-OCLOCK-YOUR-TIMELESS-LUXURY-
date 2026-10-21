@@ -1,0 +1,16 @@
+# Dependencies and build output
+node_modules
+dist
+.next
+out
+coverage
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+.env*.local
+
+# Editor and OS noise
+.DS_Store
+*.log
