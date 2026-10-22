@@ -1,12 +1,13 @@
 'use client';
 
+import { asset } from '@/lib/demo/asset';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { PlayCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function ProductGallery({ images, video, name }: { images: string[]; video?: string | undefined; name: string }) {
-  const sources = images.length ? images : ['/placeholders/watches.svg'];
+  const sources = images.length ? images : [asset('/placeholders/watches.svg')];
   const [active, setActive] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const [zoom, setZoom] = useState<{ x: number; y: number; on: boolean }>({ x: 50, y: 50, on: false });

@@ -1,5 +1,6 @@
 'use client';
 
+import { asset } from '@/lib/demo/asset';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -10,14 +11,14 @@ const BANNERS = [
     eyebrow: 'Horology',
     title: 'The Watch Edit',
     copy: 'Automatic chronometers and dress pieces in steel and gold.',
-    image: '/placeholders/watches.svg',
+    image: asset('/placeholders/watches.svg'),
   },
   {
     href: '/shop?category=sneakers',
     eyebrow: 'Footwear',
     title: 'World of Kiki Kicks',
     copy: 'Limited runs and everyday icons, made to be worn.',
-    image: '/placeholders/sneakers.svg',
+    image: asset('/placeholders/sneakers.svg'),
   },
 ];
 

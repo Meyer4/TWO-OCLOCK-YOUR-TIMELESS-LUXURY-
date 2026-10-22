@@ -1,5 +1,6 @@
 'use client';
 
+import { asset } from '@/lib/demo/asset';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCategories } from '@/hooks/use-store';
@@ -31,7 +32,7 @@ export function CategoryGrid() {
           {(data ?? []).map((c) => (
             <Link key={c.slug} href={`/shop?category=${c.slug}`} className="group relative aspect-[3/4] overflow-hidden bg-ink-soft">
               <Image
-                src={c.image ?? FALLBACK_IMAGE[c.slug] ?? '/placeholders/watches.svg'}
+                src={c.image ?? asset(FALLBACK_IMAGE[c.slug] ?? '/placeholders/watches.svg')}
                 alt=""
                 fill
                 sizes="(min-width: 1024px) 25vw, 50vw"

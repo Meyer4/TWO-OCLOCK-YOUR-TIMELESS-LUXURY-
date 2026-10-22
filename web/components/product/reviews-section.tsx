@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -87,7 +88,7 @@ export function ReviewsSection({ productId, productSlug, productName }: { produc
         <p className="font-display text-2xl">Write a review</p>
         {!me.data ? (
           <p className="mt-4 text-sm text-stone">
-            <a href={`/login?next=/products/${productSlug}`} className="text-gold underline-offset-4 hover:underline">Sign in</a> to review pieces you have purchased.
+            <Link href={`/login?next=/products/${productSlug}`} className="text-gold underline-offset-4 hover:underline">Sign in</Link> to review pieces you have purchased.
           </p>
         ) : (
           <form onSubmit={submit} className="mt-6 space-y-5" noValidate>

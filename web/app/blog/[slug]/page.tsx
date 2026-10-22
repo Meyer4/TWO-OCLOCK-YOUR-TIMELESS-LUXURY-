@@ -1,3 +1,4 @@
+import { DEMO } from '@/lib/demo/mode';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -5,6 +6,11 @@ import { notFound } from 'next/navigation';
 import { renderMarkdown } from '@/lib/markdown';
 import { serverGet, SITE_URL } from '@/lib/server-api';
 import { formatDate } from '@/lib/format';
+
+/** The journal is not pre-rendered. Static demo export needs one placeholder route. */
+export function generateStaticParams() {
+  return DEMO ? [{ slug: 'demo' }] : [];
+}
 
 interface Post {
   title: string;

@@ -4,6 +4,9 @@
  * - On a 401 it transparently refreshes the session once, then retries.
  */
 
+import { DEMO } from '@/lib/demo/mode';
+import { demoRequest, DemoError } from '@/lib/demo/handler';
+
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -71,6 +74,15 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 }
 
 export async function api<T = unknown>(path: string, options: RequestOptions = {}): Promise<T> {
+  if (DEMO) {
+    // Static demo build: answer from the bundled seed catalogue (no network call).
+    try {
+      return (await demoRequest(path, { method: options.method })) as T;
+    } catch (err) {
+      if (err instanceof DemoError) throw new ApiError(err.status, err.code, err.message);
+      throw err;
+    }
+  }
   const method = (options.method ?? 'GET').toUpperCase();
   const headers = new Headers(options.headers);
   if (options.body !== undefined) headers.set('Content-Type', 'application/json');

@@ -3,14 +3,28 @@ import { notFound } from 'next/navigation';
 import { ProductDetail } from '@/components/product/product-detail';
 import type { Product } from '@/lib/types';
 import { effectivePrice } from '@/lib/format';
+import { DEMO } from '@/lib/demo/mode';
+import { demoRequest, DEMO_PRODUCT_SLUGS } from '@/lib/demo/handler';
 
 const API = process.env.API_INTERNAL_URL ?? 'http://localhost:4000';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 type Props = { params: Promise<{ slug: string }> };
 
+/** Static demo build: every demo product gets a pre-rendered page. Live builds render on demand. */
+export function generateStaticParams() {
+  return DEMO ? DEMO_PRODUCT_SLUGS.map((slug) => ({ slug })) : [];
+}
+
 /** Server-side fetch so product pages are fully SEO-rendered. */
 async function fetchProduct(slug: string): Promise<Product | null> {
+  if (DEMO) {
+    try {
+      return (await demoRequest<{ item: Product }>(`/products/${encodeURIComponent(slug)}`)).item;
+    } catch {
+      return null;
+    }
+  }
   try {
     const res = await fetch(`${API}/api/products/${encodeURIComponent(slug)}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;

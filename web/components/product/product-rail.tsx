@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -23,9 +24,9 @@ export function ProductRail({
           <h2 className="font-display mt-2 text-3xl sm:text-4xl">{title}</h2>
         </div>
         {href ? (
-          <a href={href} className="text-[11px] uppercase tracking-[0.25em] text-gold hover:text-gold-bright">
+          <Link href={href} className="text-[11px] uppercase tracking-[0.25em] text-gold hover:text-gold-bright">
             View all
-          </a>
+          </Link>
         ) : null}
       </div>
       {loading ? (

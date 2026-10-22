@@ -1,3 +1,4 @@
+import { asset } from '@/lib/demo/asset';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
@@ -6,7 +7,7 @@ import { Stars } from '@/components/ui/stars';
 import { Badge } from '@/components/ui/badge';
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
-  const image = product.images[0] ?? '/placeholders/watches.svg';
+  const image = product.images[0] ?? asset('/placeholders/watches.svg');
   const onSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
   const outOfStock = product.stock <= 0;
   const lowStock = !outOfStock && product.stock <= 5;

@@ -1,5 +1,6 @@
 'use client';
 
+import { asset } from '@/lib/demo/asset';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { buttonVariants } from '@/components/ui/button';
@@ -20,7 +21,7 @@ export function Hero() {
           muted
           loop
           playsInline
-          poster="/placeholders/watches.svg"
+          poster={asset('/placeholders/watches.svg')}
           className="absolute inset-0 -z-20 h-full w-full object-cover opacity-50"
         >
           <source src={video} />

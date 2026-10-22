@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:pages": "NEXT_PUBLIC_DEMO=1 next build"
   },
   "engines": {
     "node": ">=20.9"
