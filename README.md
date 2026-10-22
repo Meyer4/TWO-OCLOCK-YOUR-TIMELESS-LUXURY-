@@ -8,6 +8,12 @@ E-commerce storefront, customer accounts, and admin studio for luxury watches, s
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the design, data model and order lifecycle.
 
+### Live demo (GitHub Pages)
+
+`.github/workflows/pages.yml` builds a **static demo** of the storefront and publishes it to GitHub Pages on every push to the session branch. The demo uses the seed catalogue (6 products, 4 categories) bundled into the build. Browsing, search, filters, product pages and the bag work. Sign-in, checkout, wishlists, reviews and admin are disabled and show a "demo only" message, because they need the API and MongoDB.
+
+One-time setup for the repository owner: **Settings → Pages → Build and deployment → Source: GitHub Actions**. The site is then served at `https://<owner>.github.io/<repository>/`. Build it locally with `cd web && npm run build:pages` (set `NEXT_PUBLIC_BASE_PATH` to `/<repository>` to match the Pages path).
+
 ## Features
 
 | Area | What is included |
