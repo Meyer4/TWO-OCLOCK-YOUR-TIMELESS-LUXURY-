@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b0b0c;
+  --color-ink-soft: #151517;
+  --color-ink-line: #2a2824;
+  --color-ivory: #f5f1e8;
+  --color-ivory-dim: #d9d4c7;
+  --color-stone: #7d786c;
+  --color-gold: #c9a96e;
+  --color-gold-bright: #e0c48c;
+  --color-gold-deep: #9c7c45;
+  --color-danger: #d46a5a;
+  --color-success: #8fb996;
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.32em] text-gold;
+  }
+  .gold-hairline {
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    height: 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Long-form article typography for the journal. Content is pre-escaped by lib/markdown.ts. */
+.prose-tl {
+  @apply text-[1.0625rem] leading-8 text-ivory-dim;
+}
+.prose-tl > * + * {
+  @apply mt-6;
+}
+.prose-tl h2 {
+  @apply font-display mt-14 text-3xl text-ivory;
+}
+.prose-tl h3 {
+  @apply font-display mt-10 text-2xl text-ivory;
+}
+.prose-tl h4 {
+  @apply font-display mt-8 text-xl text-ivory;
+}
+.prose-tl a {
+  @apply text-gold underline underline-offset-4;
+}
+.prose-tl strong {
+  @apply text-ivory;
+}
+.prose-tl ul {
+  @apply list-disc space-y-2 pl-6;
+}
+.prose-tl ol {
+  @apply list-decimal space-y-2 pl-6;
+}

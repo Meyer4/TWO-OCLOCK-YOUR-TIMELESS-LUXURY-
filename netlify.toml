@@ -1,0 +1,17 @@
+# Netlify: connect this repo, leave "Base directory" empty, and Netlify builds the static store.
+# Only the static storefront is published (no server). Set NEXT_PUBLIC_PAYPAL_CLIENT_ID in the
+# Netlify UI (Site configuration > Environment variables) to turn on PayPal.
+[build]
+  command = "cd web && npm ci && NEXT_PUBLIC_SITE_URL=${URL:-http://localhost:3000} npm run build:netlify"
+  publish = "web/out"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self)"

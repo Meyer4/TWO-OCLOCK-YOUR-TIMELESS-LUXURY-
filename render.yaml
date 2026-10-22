@@ -1,0 +1,74 @@
+# Render Blueprint for the API. The storefront deploys to Vercel (see web/vercel.json).
+# MongoDB: use MongoDB Atlas and paste its connection string into MONGODB_URI.
+services:
+  - type: web
+    name: two-oclock-api
+    runtime: node
+    region: singapore
+    plan: starter
+    rootDir: server
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: LOG_LEVEL
+        value: info
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+        # e.g. https://www.example.com (the Vercel storefront origin)
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: STORE_NAME
+        value: Timeless Luxury Two O'Clock
+      - key: STORE_SUPPORT_EMAIL
+        sync: false
+      - key: STORE_WHATSAPP_NUMBER
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_CURRENCY
+        value: usd
+      - key: STRIPE_MWK_RATE
+        value: "1750"
+      - key: AIRTEL_MONEY_BASE_URL
+        sync: false
+      - key: AIRTEL_MONEY_API_KEY
+        sync: false
+      - key: AIRTEL_MONEY_WEBHOOK_SECRET
+        sync: false
+      - key: MPAMBA_BASE_URL
+        sync: false
+      - key: MPAMBA_API_KEY
+        sync: false
+      - key: MPAMBA_WEBHOOK_SECRET
+        sync: false
