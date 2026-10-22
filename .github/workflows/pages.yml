@@ -1,10 +1,11 @@
-name: Deploy demo to GitHub Pages
+name: Deploy store to GitHub Pages
 
-# Builds the static demo storefront (seed catalogue, no backend) and publishes it to GitHub Pages.
+# Builds the static store (WhatsApp checkout, no backend) and publishes it to GitHub Pages.
+# Deploys only from main: the github-pages environment only accepts main.
 on:
   push:
     branches:
-      - arena/08586285-two-oclock-your-timeless-luxur
+      - main
   workflow_dispatch:
 
 permissions:
