@@ -9,7 +9,7 @@
     "start": "next start -H 0.0.0.0 -p 3000",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "build:pages": "NEXT_PUBLIC_DEMO=1 next build"
+    "build:pages": "NEXT_PUBLIC_DEMO=1 next build && node scripts/prune-static.mjs out"
   },
   "engines": {
     "node": ">=20.9"
