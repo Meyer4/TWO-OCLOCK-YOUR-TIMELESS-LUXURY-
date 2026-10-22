@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO } from '@/lib/demo/mode';
+import { waLink } from '@/lib/store-config';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -98,6 +100,16 @@ export function ProductDetail({ product }: { product: Product }) {
   };
 
   const handleWhatsApp = () => {
+    if (DEMO) {
+      if (product.sizes.length > 0 && !size) {
+        toast.error('Please select a size.');
+        return;
+      }
+      const variant = [size && `Size ${size}`, color].filter(Boolean).join(', ');
+      const message = `Hello Two O'Clock, I'd like to order: ${product.name}${variant ? ` (${variant})` : ''} x${quantity} = ${formatMWK(unit * quantity)}. Please confirm availability, delivery and payment.`;
+      window.open(waLink(message), '_blank', 'noopener,noreferrer');
+      return;
+    }
     if (ensureAddable()) router.push('/checkout?pay=whatsapp');
   };
 
@@ -212,17 +224,19 @@ export function ProductDetail({ product }: { product: Product }) {
             <Button size="lg" variant="outline" onClick={handleWhatsApp} disabled={outOfStock} className="w-full">
               <MessageCircle className="h-4 w-4" /> WhatsApp order
             </Button>
-            <Button
-              size="lg"
-              variant="ghost"
-              onClick={handleWishlist}
-              disabled={wishlistActions.add.isPending}
-              className="w-full border border-ink-line"
-              aria-pressed={inWishlist}
-            >
-              <Heart className={cn('h-4 w-4', inWishlist && 'fill-gold text-gold')} />
-              {inWishlist ? 'In wishlist' : 'Add to wishlist'}
-            </Button>
+            {DEMO ? null : (
+              <Button
+                size="lg"
+                variant="ghost"
+                onClick={handleWishlist}
+                disabled={wishlistActions.add.isPending}
+                className="w-full border border-ink-line"
+                aria-pressed={inWishlist}
+              >
+                <Heart className={cn('h-4 w-4', inWishlist && 'fill-gold text-gold')} />
+                {inWishlist ? 'In wishlist' : 'Add to wishlist'}
+              </Button>
+            )}
           </div>
 
           <div className="mt-10 space-y-3 border-t border-ink-line pt-6 text-sm text-ivory-dim">
@@ -235,7 +249,7 @@ export function ProductDetail({ product }: { product: Product }) {
 
       <div className="mt-20">
         <div role="tablist" aria-label="Product information" className="flex gap-8 border-b border-ink-line">
-          {(['description', 'specifications', 'reviews'] as Tab[]).map((t) => (
+          {(['description', 'specifications', ...(DEMO ? [] : ['reviews'])] as Tab[]).map((t) => (
             <button
               key={t}
               role="tab"

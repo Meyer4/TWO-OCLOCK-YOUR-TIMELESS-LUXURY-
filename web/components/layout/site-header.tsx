@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO } from '@/lib/demo/mode';
+import { asset } from '@/lib/demo/asset';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -131,7 +133,9 @@ export function SiteHeader() {
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        <Link href="/" className="font-display text-lg tracking-wide text-ivory">
+        <Link href="/" className="flex items-center gap-3 font-display text-lg tracking-wide text-ivory">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={asset('/brand/logo-192.png')} alt="" width={36} height={36} className="h-9 w-9 rounded-full" />
           Two O&apos;Clock
           <span className="ml-2 hidden text-[10px] uppercase tracking-[0.3em] text-gold sm:inline">Timeless Luxury</span>
         </Link>
@@ -149,12 +153,16 @@ export function SiteHeader() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link href="/account/wishlist" aria-label="Wishlist" className="text-ivory-dim hover:text-gold">
-            <Heart className="h-5 w-5" />
-          </Link>
-          <Link href={hydrated && me.data ? '/account' : '/login'} aria-label="Account" className="text-ivory-dim hover:text-gold">
-            <User className="h-5 w-5" />
-          </Link>
+          {DEMO ? null : (
+            <>
+              <Link href="/account/wishlist" aria-label="Wishlist" className="text-ivory-dim hover:text-gold">
+                <Heart className="h-5 w-5" />
+              </Link>
+              <Link href={hydrated && me.data ? '/account' : '/login'} aria-label="Account" className="text-ivory-dim hover:text-gold">
+                <User className="h-5 w-5" />
+              </Link>
+            </>
+          )}
           <Link href="/cart" aria-label={`Cart, ${cartCount} items`} className="relative text-ivory-dim hover:text-gold">
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 ? (
@@ -180,11 +188,13 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href={me.data ? '/account' : '/login'} className="block px-6 py-3 text-sm uppercase tracking-[0.2em] text-ivory-dim hover:text-gold">
-                {me.data ? 'My account' : 'Sign in'}
-              </Link>
-            </li>
+            {DEMO ? null : (
+              <li>
+                <Link href={me.data ? '/account' : '/login'} className="block px-6 py-3 text-sm uppercase tracking-[0.2em] text-ivory-dim hover:text-gold">
+                  {me.data ? 'My account' : 'Sign in'}
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       ) : null}

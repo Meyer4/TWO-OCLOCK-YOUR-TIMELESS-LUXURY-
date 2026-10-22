@@ -1,5 +1,7 @@
 'use client';
 
+import { DEMO } from '@/lib/demo/mode';
+import { waLink } from '@/lib/store-config';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Field, Input, Notice, Textarea } from '@/components/ui/field';
@@ -19,6 +21,12 @@ export function ContactForm() {
     e.preventDefault();
     setErrors({});
     setError(null);
+    if (DEMO) {
+      const text = `Hello Two O'Clock, ${form.name.trim()} (${form.email.trim()}${form.phone.trim() ? `, ${form.phone.trim()}` : ''}):\n\n${form.message.trim()}`;
+      window.open(waLink(text), '_blank', 'noopener,noreferrer');
+      setSent('Opening WhatsApp with your message. We reply there as soon as we can.');
+      return;
+    }
     setPending(true);
     try {
       const res = await api<{ message: string }>('/contact', {

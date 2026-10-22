@@ -1,5 +1,6 @@
 'use client';
 
+import { DEMO } from '@/lib/demo/mode';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,8 +40,8 @@ export function CartView() {
   }
 
   const checkout = () => {
-    if (!me.data) router.push('/login?next=/checkout');
-    else router.push('/checkout');
+    if (DEMO || me.data) router.push('/checkout');
+    else router.push('/login?next=/checkout');
   };
 
   return (

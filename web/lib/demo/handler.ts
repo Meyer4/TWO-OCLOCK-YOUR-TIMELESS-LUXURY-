@@ -3,7 +3,34 @@
  * Mirrors the shapes of the real API (server/src/routes). Only used in the static demo build.
  */
 import type { Category, Paginated, Product } from '@/lib/types';
-import { SEED_CATEGORIES, SEED_PRODUCTS } from './catalog';
+import catalog from '@/data/catalog.json';
+import { STORE } from '@/lib/store-config';
+
+interface SeedCategory {
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  sortOrder: number;
+}
+
+interface SeedProduct {
+  name: string;
+  category: string;
+  brand: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  salePrice?: number;
+  stock: number;
+  sku: string;
+  image: string;
+  sizes?: string[];
+  colors?: string[];
+  tags: string[];
+  featured?: boolean;
+  soldCount?: number;
+}
 import { asset } from './asset';
 
 export class DemoError extends Error {
@@ -20,7 +47,7 @@ export class DemoError extends Error {
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-const categories: Category[] = SEED_CATEGORIES.map((c, i) => ({
+const categories: Category[] = (catalog.categories as SeedCategory[]).map((c, i) => ({
   _id: `cat-${c.slug}`,
   name: c.name,
   slug: c.slug,
@@ -30,7 +57,7 @@ const categories: Category[] = SEED_CATEGORIES.map((c, i) => ({
 }));
 const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
 
-const products: Product[] = SEED_PRODUCTS.map((p, i) => {
+const products: Product[] = (catalog.products as SeedProduct[]).map((p, i) => {
   const category = categoryBySlug.get(p.category);
   const salePrice = p.salePrice ?? null;
   return {
@@ -125,7 +152,7 @@ const demoOnly = () =>
   new DemoError(
     503,
     'DEMO_ONLY',
-    'This is the GitHub Pages demo. Sign-in, checkout, wishlists and admin need the full backend.',
+    'Online accounts are not available on this site. Please order on WhatsApp instead.',
   );
 
 /**
@@ -146,10 +173,10 @@ export async function demoRequest<T = unknown>(path: string, options: { method?:
   if (pathname === '/health') return { status: 'ok', db: 'demo' } as T;
   if (pathname === '/settings') {
     return {
-      storeName: "Timeless Luxury Two O'Clock",
-      supportEmail: 'hello@example.com',
-      supportPhone: null,
-      whatsappNumber: null,
+      storeName: STORE.name,
+      supportEmail: '',
+      supportPhone: STORE.whatsappDisplay,
+      whatsappNumber: STORE.whatsapp,
       maintenanceMode: false,
       currency: 'MWK',
     } as T;
